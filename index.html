@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주휴수당(시급) 계산기</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Malgun Gothic', sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .calculator-container {
+            width: 100%;
+            max-width: 500px;
+        }
+        .calculator-header {
+            background-color: #0056b3;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            border-radius: 8px 8px 0 0;
+        }
+        .calculator-body {
+            border: 1px solid #0056b3;
+            border-top: none;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            background-color: white;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-label {
+            display: block;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .text-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .radio-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .radio-input {
+            margin-right: 8px;
+        }
+        .radio-label {
+            font-size: 1.1rem;
+            margin-right: 20px;
+        }
+        .work-hours-text {
+            font-size: 0.95rem;
+            color: #444;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #004494;
+        }
+        .result-container {
+            border: 2px solid #28a745;
+            padding: 15px;
+            text-align: center;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+        .result-text {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .download-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .download-button:hover {
+            background-color: #218838;
+        }
+        .note-text {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 25px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator-header">
+            주휴수당(시급) 계산기
+        </div>
+        <div class="calculator-body">
+            <div class="input-group">
+                <label class="input-label">시급 (원)</label>
+                <input type="text" id="hourlyWage" class="text-input" placeholder="예: 10000" value="10000">
+            </div>
+            
+            <div class="input-group">
+                <div class="radio-group">
+                    <input type="radio" id="fixedTime" name="workTimeType" class="radio-input" checked>
+                    <label for="fixedTime" class="radio-label">고정 근무시간</label>
+                    
+                    <input type="radio" id="customTime" name="workTimeType" class="radio-input">
+                    <label for="customTime" class="radio-label">선택 근무시간</label>
+                </div>
+            </div>
+            
+            <div class="input-group" id="fixedTimeGroup">
+                <label class="input-label">한 주 근무시간</label>
+                <p class="work-hours-text">
+                    하루 8시간, 주 5일 근무 시 주휴수당 8시간 포함하여<br>
+                    총 48시간으로 계산
+                </p>
+            </div>
+            
+            <div class="input-group" id="customTimeGroup" style="display: none;">
+                <label class="input-label">한 주 근무시간 (시급 계산 시 주휴 포함)</label>
+                <input type="text" id="weeklyWorkHours" class="text-input" placeholder="예: 40 or 48" value="48">
+            </div>
+            
+            <div class="button-group">
+                <button id="resetButton" class="button">초기화</button>
+                <button id="calculateButton" class="button">계산하기</button>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="result-text" id="hourlyWageResult">시급: 10,000원</div>
+                <div class="result-text" id="weeklyPayResult">주급: 480,000원</div>
+                <div class="result-text" id="monthlyPayResult">월 환산: 2,085,600원</div>
+                <button id="downloadButton" class="download-button">이미지로 다운로드</button>
+            </div>
+            
+            <div class="note-text">
+                2025년 최저임금은 10,030원입니다. (세전, 고지금액)<br>
+                회사마다 주휴수당 및 통상임금 기준이 다를 수 있으므로<br>
+                실제 시급/월급과 차이가 있을 수 있습니다.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM 요소 가져오기
+        const hourlyWageInput = document.getElementById('hourlyWage');
+        const fixedTimeRadio = document.getElementById('fixedTime');
+        const customTimeRadio = document.getElementById('customTime');
+        const fixedTimeGroup = document.getElementById('fixedTimeGroup');
+        const customTimeGroup = document.getElementById('customTimeGroup');
+        const weeklyWorkHoursInput = document.getElementById('weeklyWorkHours');
+        const calculateButton = document.getElementById('calculateButton');
+        const resetButton = document.getElementById('resetButton');
+        const resultContainer = document.getElementById('resultContainer');
+        const hourlyWageResult = document.getElementById('hourlyWageResult');
+        const weeklyPayResult = document.getElementById('weeklyPayResult');
+        const monthlyPayResult = document.getElementById('monthlyPayResult');
+        const downloadButton = document.getElementById('downloadButton');
+
+        // 라디오 버튼 이벤트 리스너
+        fixedTimeRadio.addEventListener('change', function() {
+            if(this.checked) {
+                fixedTimeGroup.style.display = 'block';
+                customTimeGroup.style.display = 'none';
+            }
+        });
+
+        customTimeRadio.addEventListener('change', function() {
+            if(this.checked) {
+                fixedTimeGroup.style.display = 'none';
+                customTimeGroup.style.display = 'block';
+            }
+        });
+
+        // 계산 기능
+        calculateButton.addEventListener('click', function() {
+            const hourlyWage = parseInt(hourlyWageInput.value.replace(/,/g, ''), 10);
+            
+            if(isNaN(hourlyWage) || hourlyWage <= 0) {
+                alert('유효한 시급을 입력해주세요.');
+                return;
+            }
+            
+            // 주 근무시간 계산
+            let weeklyWorkHours = 48; // 기본값
+            
+            if(customTimeRadio.checked) {
+                const inputHours = parseInt(weeklyWorkHoursInput.value, 10);
+                if(isNaN(inputHours) || inputHours <= 0) {
+                    alert('유효한 근무시간을 입력해주세요.');
+                    return;
+                }
+                weeklyWorkHours = inputHours;
+            }
+            
+            // 계산
+            const weeklyPay = hourlyWage * weeklyWorkHours;
+            const monthlyPay = Math.round(weeklyPay * 4.345);
+            
+            // 결과 표시
+            hourlyWageResult.textContent = `시급: ${hourlyWage.toLocaleString()}원`;
+            weeklyPayResult.textContent = `주급: ${weeklyPay.toLocaleString()}원`;
+            monthlyPayResult.textContent = `월 환산: ${monthlyPay.toLocaleString()}원`;
+            
+            resultContainer.style.display = 'block';
+        });
+
+        // 초기화 기능
+        resetButton.addEventListener('click', function() {
+            hourlyWageInput.value = '10000';
+            fixedTimeRadio.checked = true;
+            customTimeRadio.checked = false;
+            weeklyWorkHoursInput.value = '48';
+            fixedTimeGroup.style.display = 'block';
+            customTimeGroup.style.display = 'none';
+            resultContainer.style.display = 'none';
+        });
+
+        // 이미지 다운로드 기능
+        downloadButton.addEventListener('click', function() {
+            alert('이미지 다운로드 기능이 활성화되었습니다. (실제 환경에서는 결과 이미지가 다운로드됩니다)');
+        });
+
+        // 숫자 입력 시 천 단위 콤마 추가
+        hourlyWageInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\d]/g, '');
+        });
+
+        weeklyWorkHoursInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^\d]/g, '');
+        });
+    </script>
+</body>
+</html>
