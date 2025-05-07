@@ -1,2 +1,6 @@
-# -_-
-주휴수당을 간단하게 계산할 수 있습니다.
+# 주휴수당 계산기
+
+A Pen created on CodePen.
+
+Original URL: [https://codepen.io/KOREA-wow/pen/JooZQLp](https://codepen.io/KOREA-wow/pen/JooZQLp).
+
