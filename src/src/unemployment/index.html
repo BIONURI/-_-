@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실업급여 계산기 (Ver. 2025)</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .calculator {
+            border: 1px solid #0066cc;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #0066cc;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .content {
+            padding: 20px;
+            background-color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0055aa;
+        }
+        .info-text {
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            border: 2px solid #28a745;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: white;
+            display: none;
+        }
+        .result h3 {
+            color: #28a745;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .result-item {
+            margin-bottom: 15px;
+        }
+        .result-item strong {
+            display: inline-block;
+            width: 140px;
+        }
+        .result-amount {
+            font-size: 1.2rem;
+            color: #28a745;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .disclaimer {
+            font-size: 0.85rem;
+            color: #666;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .download-btn {
+            display: block;
+            width: 200px;
+            margin: 15px auto 0;
+            text-align: center;
+            padding: 8px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .download-btn:hover {
+            background-color: #218838;
+        }
+        .reset-btn {
+            display: block;
+            width: 150px;
+            margin: 15px auto 0;
+            text-align: center;
+            padding: 8px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .reset-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="calculator">
+            <div class="header">실업급여 계산기 (Ver. 2025)</div>
+            <div class="content">
+                <div class="form-group">
+                    <label for="monthlySalary">평균 월급여 (원)</label>
+                    <input type="text" id="monthlySalary" placeholder="예: 2500000">
+                </div>
+                <div class="form-group">
+                    <label for="yearsWorked">근속 연수 (년)</label>
+                    <input type="text" id="yearsWorked" placeholder="예: 3">
+                </div>
+                <div class="form-group">
+                    <label for="age">나이</label>
+                    <input type="text" id="age" placeholder="예: 35">
+                </div>
+                <button id="calculate-btn">계산하기</button>
+                
+                <div class="info-text">
+                    ※ 1일 구직급여 수급액은 퇴직 전 3개월간 1일 평균임금의 60%이며,<br>
+                    상한액은 66,000원, 하한액은 64,192원입니다. (2025년 1월 기준)<br>
+                    실제 수급일수 및 수급액과 차이가 있을 수 있습니다.
+                </div>
+            </div>
+        </div>
+        
+        <div id="result" class="result">
+            <h3>실업급여 계산 결과</h3>
+            <div class="result-item">
+                <strong>1일 구직급여:</strong> <span id="dailyBenefit"></span>원
+            </div>
+            <div class="result-item">
+                <strong>수급일수:</strong> <span id="benefitDays"></span>일
+            </div>
+            <div class="result-amount">
+                <strong>총 예상 수급액:</strong> <span id="totalBenefit"></span>원
+            </div>
+            <div class="disclaimer">
+                ※ 위 계산 결과는 단순 참고용으로, 실제 수급액은 관할 고용센터에서 정확한 심사 후 결정됩니다.
+                특히 연령과 근속 기간에 따라 실제 수급일수가 달라질 수 있습니다.
+            </div>
+            <button class="download-btn" id="download-btn">이미지로 다운로드</button>
+            <button class="reset-btn" id="reset-btn">다시 계산하기</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM 요소
+            const monthlySalaryInput = document.getElementById('monthlySalary');
+            const yearsWorkedInput = document.getElementById('yearsWorked');
+            const ageInput = document.getElementById('age');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultDiv = document.getElementById('result');
+            const downloadBtn = document.getElementById('download-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            // 입력값이 숫자만 허용되도록 설정
+            [monthlySalaryInput, yearsWorkedInput, ageInput].forEach(input => {
+                input.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+            });
+            
+            // 수급일수 계산 함수
+            function calculateBenefitDays(years, age) {
+                const yearsWorked = parseInt(years);
+                const personAge = parseInt(age);
+                
+                // 연령과 근속연수에 따른 수급일수 표
+                if (yearsWorked < 1) {
+                    return 90; // 1년 미만
+                } else if (yearsWorked < 3) {
+                    return 120; // 1년 이상 3년 미만
+                } else if (yearsWorked < 5) {
+                    if (personAge < 50) {
+                        return 150; // 3년 이상 5년 미만, 50세 미만
+                    } else {
+                        return 180; // 3년 이상 5년 미만, 50세 이상
+                    }
+                } else if (yearsWorked < 10) {
+                    if (personAge < 50) {
+                        return 180; // 5년 이상 10년 미만, 50세 미만
+                    } else {
+                        return 210; // 5년 이상 10년 미만, 50세 이상
+                    }
+                } else {
+                    if (personAge < 50) {
+                        return 210; // 10년 이상, 50세 미만
+                    } else {
+                        return 240; // 10년 이상, 50세 이상
+                    }
+                }
+            }
+            
+            // 계산 버튼 클릭 이벤트
+            calculateBtn.addEventListener('click', function() {
+                const monthlySalary = parseInt(monthlySalaryInput.value);
+                const yearsWorked = parseFloat(yearsWorkedInput.value);
+                const age = parseInt(ageInput.value);
+                
+                if (!monthlySalary || !yearsWorked || !age) {
+                    alert('모든 필드를 입력해주세요.');
+                    return;
+                }
+                
+                // 1일 실업급여 금액 (60% 적용)
+                let dailyBenefit = (monthlySalary / 30) * 0.6;
+                
+                // 상한액과 하한액 적용 (2025년 1월 기준)
+                const upperLimit = 66000; // 상한액
+                const lowerLimit = 64192; // 하한액
+                
+                if (dailyBenefit > upperLimit) {
+                    dailyBenefit = upperLimit;
+                } else if (dailyBenefit < lowerLimit) {
+                    dailyBenefit = lowerLimit;
+                }
+                
+                // 수급일수 계산
+                const benefitDays = calculateBenefitDays(yearsWorked, age);
+                
+                // 총 수급액 계산
+                const totalBenefit = dailyBenefit * benefitDays;
+                
+                // 결과 표시
+                document.getElementById('dailyBenefit').textContent = formatNumber(Math.round(dailyBenefit));
+                document.getElementById('benefitDays').textContent = benefitDays;
+                document.getElementById('totalBenefit').textContent = formatNumber(Math.round(totalBenefit));
+                
+                // 결과 화면 표시
+                resultDiv.style.display = 'block';
+            });
+            
+            // 다운로드 버튼 클릭 이벤트
+            downloadBtn.addEventListener('click', function() {
+                alert('이미지 다운로드 기능은 html2canvas 라이브러리가 필요합니다. 현재 데모에서는 기능이 제한됩니다.');
+                // 실제 구현 시 html2canvas 라이브러리를 사용하여 결과 영역을 이미지로 저장
+            });
+            
+            // 리셋 버튼 클릭 이벤트
+            resetBtn.addEventListener('click', function() {
+                monthlySalaryInput.value = '';
+                yearsWorkedInput.value = '';
+                ageInput.value = '';
+                resultDiv.style.display = 'none';
+            });
+            
+            // 숫자 포맷 함수 (콤마 추가)
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+        });
+    </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
